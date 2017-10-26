@@ -6,7 +6,7 @@ let seed = 0;
 
 const dec = "DEC";
 const ack= "ACK";
-const qa = "QA";
+const qa = "FILE";
 const unknown = "UNKNOWN";
 const dir = "Direct";
 const client_name = "Client";

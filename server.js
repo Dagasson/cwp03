@@ -26,26 +26,7 @@ const server = net.createServer((client) =>
             console.log("id : " + client.id);
         }
         log(client.id, data, client_name);
-        if (data === qa)
-        {
-            client.write(ack);
-            log(client.id, ack, server_name);
-        }
-        else
-        {
-            let answer = rand_ans(data);
-            if (answer === unknown)
-            {
-                client.write(dec);
-                log(client.id, dec, server_name);
-                client.disconnect();
-            }
-            else
-            {
-                client.write(answer);
-                log(client.id, answer, server_name);
-            }
-        }
+        
     });
 
     client.on('end', () => console.log('Client disconnected'));

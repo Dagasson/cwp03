@@ -29,5 +29,27 @@ function get_adress(adr, err){
 		adr[i-2]= process.argv[i];
 	}	
 	for (let i=0; i<adr.length;i++) console.log(adr[i]);
-		
 }
+
+function send_file(adr, err){
+	if(err) console.log("Sending is not success.");
+	for(let ind=0; ind<adr.length; ind++)
+	{
+		fs.readdir(adr[ind], function(err, files) {
+		if(err) console.log("Ошибка при чтении директория.");
+		else
+		{
+			for(let i in files)
+				{
+					let files_or_directories=pat+'\\'+files[i];
+					if(fs.statSync(files_or_directories).isDirectory()) continue;
+					else
+					{
+						client.write(files[i]);
+                    }
+				}
+			}
+	});
+    }
+}
+	

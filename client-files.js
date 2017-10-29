@@ -1,15 +1,16 @@
 const net = require('net');
 const fs = require('fs');
 const port = 8124;
+const path=require('path');
 
 const client = new net.Socket();
-let questions = [];
 let ind = 0;
 let adr=[];
+let separator = "\t\v\t\r";
 
 const dec = "DEC";
 const ack = "ACK";
-const qa = "FILE";
+const fl = "FILES";
 const unknown = "UNKNOWN";
 const dir = "Direct";
 const client_name = "Client";
@@ -18,9 +19,16 @@ const server_name = "Server";
 client.setEncoding('utf8');
 
 client.connect(port, function() {
-            client.write(qa);
+            client.write(fl);
             console.log('Connected to the server');
      get_adress(adr);   
+});
+client.on('data', function (data){
+	if(data===ack) 
+	{
+		console.log("connection established");
+		send_file(adr);
+	}
 });
 
 function get_adress(adr, err){
@@ -33,23 +41,27 @@ function get_adress(adr, err){
 
 function send_file(adr, err){
 	if(err) console.log("Sending is not success.");
+	else{
 	for(let ind=0; ind<adr.length; ind++)
 	{
-		fs.readdir(adr[ind], function(err, files) {
-		if(err) console.log("Ошибка при чтении директория.");
+		console.log("Start sending.");
+		fs.readdirSync(adr[ind], function(err, files) {
+		if(err) console.log("Error reading directory.");
 		else
 		{
+			console.log("Working with directory:"+adr[ind]);
 			for(let i in files)
 				{
-					let files_or_directories=pat+'\\'+files[i];
-					if(fs.statSync(files_or_directories).isDirectory()) continue;
+					let iffiles=pat+'\\'+files[i];
+					if(fs.statSync(iffiles).isDirectory()) send_file(iffiles);
 					else
 					{
 						client.write(files[i]);
+						console.log("Sending files.");
                     }
 				}
 			}
 	});
-    }
+    }}
 }
 	
